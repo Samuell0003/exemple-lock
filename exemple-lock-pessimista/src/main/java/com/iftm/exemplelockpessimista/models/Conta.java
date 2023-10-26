@@ -22,8 +22,8 @@ public class Conta implements Serializable {
     private String conta;
     private String agencia;
     private Double saldo;
-    @Version
-    private int version;
+//    @Version
+//    private int version;
 
 
     public boolean sacar( Double valor) {

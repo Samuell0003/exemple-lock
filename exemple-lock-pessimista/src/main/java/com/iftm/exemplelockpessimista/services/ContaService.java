@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
@@ -16,9 +17,15 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 public class ContaService {
     @Autowired
     private ContaRepository contaRepository;
-
+    @Transactional
     public ResponseEntity<Conta> save (Conta conta) {
+        if (contaRepository.findByConta(conta.getConta()).isPresent())
+            return ResponseEntity.notFound().build();
         return ResponseEntity.ok(contaRepository.save(conta));
+    }
+
+    public ResponseEntity<List<Conta>> findAll() {
+        return ResponseEntity.ok(contaRepository.findAll());
     }
 
     @Transactional

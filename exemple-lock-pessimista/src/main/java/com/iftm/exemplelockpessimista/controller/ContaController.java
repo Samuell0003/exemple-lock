@@ -5,10 +5,9 @@ import com.iftm.exemplelockpessimista.models.Transacao;
 import com.iftm.exemplelockpessimista.services.ContaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/account")
@@ -27,8 +26,13 @@ public class ContaController {
         return contaService.depositar(transacao.numeroConta(), transacao.valor());
     }
 
-    @PostMapping("")
+    @PostMapping()
     public ResponseEntity<Conta> save(@RequestBody Conta conta) {
         return contaService.save(conta);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Conta>> findAll() {
+        return contaService.findAll();
     }
 }

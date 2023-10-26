@@ -6,6 +6,10 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,40 +18,42 @@ import java.util.concurrent.Executors;
 // then press Enter. You can now see whitespace characters in your code.
 public class Main {
     public static void main(String[] args) {
-        int i =0;
-        while (i<20) {
-            Thread requestThread = new Thread(() -> {
-                createRequestSaveItemPedido();
+        String servidorURLpessimista = "http://localhost:8000/account/sacar"; // pessimista
+        String servidorURLotimista = "http://localhost:8080/account/sacar"; // otimista
+        int numeroContas = 1000;
+
+        ExecutorService executor = Executors.newFixedThreadPool(numeroContas);
+
+        for (int i = 1; i <= numeroContas; i++) {
+            final int contaIndex = i;
+            executor.execute(() -> {
+
+                double valor = 100.0;
+
+                try {
+                    URL url = new URL( servidorURLpessimista );
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+                    connection.setRequestMethod("POST");
+                    connection.setRequestProperty("Content-Type", "application/json");
+                    connection.setDoOutput(true);
+
+                    String requestBody = "{\"numeroConta\":\"" + "1234" + "\", \"valor\":" + valor + "}";
+
+                    try (DataOutputStream out = new DataOutputStream(connection.getOutputStream())) {
+                        out.write(requestBody.getBytes("UTF-8"));
+                    }
+
+                    int responseCode = connection.getResponseCode();
+                    System.out.println("Requisição para enviada. Código de resposta: " + responseCode);
+
+                    connection.disconnect();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             });
-            requestThread.start();
-            i++;
         }
-    }
 
-    public static void createRequestSaveItemPedido() {
-
-        try {
-            CloseableHttpClient httpClient = HttpClients.createDefault();
-            String urlOtimista = "http://localhost:8080/account/sacar";
-            String urlPessimista = "http://localhost:8000/account/sacar";
-
-            HttpPost postRequest = new HttpPost( /*url*/ );
-            String jsonRequest = "{" +
-                    "\"numeroConta\":\""+1234+
-                    "\",\"valor\":\""+100+"\"}";
-
-            StringEntity entity = new StringEntity(jsonRequest);
-            postRequest.setEntity(entity);
-            postRequest.setHeader("Content-type", "application/json");
-
-            CloseableHttpResponse response = httpClient.execute(postRequest);
-            String responseBody = EntityUtils.toString(response.getEntity());
-
-            System.out.println("Resposta: " + responseBody + "\nJson enviado: " + jsonRequest);
-
-            httpClient.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        executor.shutdown();
     }
 }
