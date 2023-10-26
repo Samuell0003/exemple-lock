@@ -4,8 +4,12 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.io.Serializable;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 @Data
 @Entity
 @NoArgsConstructor
@@ -24,16 +28,23 @@ public class Conta implements Serializable {
     private int version;
 
 
-    public Double sacar( Double valor) {
-        if (valor > this.saldo)
-            return this.saldo;
-        return this.saldo -= valor;
+    public boolean sacar( Double valor) {
+        if (valor > this.saldo) {
+            return false;
+
+        } else {
+            this.saldo -= valor;
+            return true;
+        }
     }
 
-    public Double depositar( Double valor ) {
-        if (valor <= 0)
-            return this.saldo;
-        return this.saldo += valor;
+    public boolean depositar( Double valor ) {
+        if (valor <= 0) {
+            return false;
+        } else {
+            this.saldo += valor;
+            return true;
+        }
     }
 
 }

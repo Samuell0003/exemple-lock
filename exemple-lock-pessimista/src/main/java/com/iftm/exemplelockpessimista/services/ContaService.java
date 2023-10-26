@@ -22,20 +22,22 @@ public class ContaService {
     }
 
     @Transactional
-    public ResponseEntity<Conta> sacar(String conta, Double valor) {
+    public ResponseEntity<?> sacar(String conta, Double valor) {
         var contaDb = contaRepository.findByConta(conta).orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Conta inecistente"));
 
-        contaDb.sacar(valor);
+        if (!contaDb.sacar(valor))
+            return ResponseEntity.status(400).body("Saldo insuficiente");
 
         return ResponseEntity.ok(contaRepository.save(contaDb));
 
     }
 
     @Transactional
-    public ResponseEntity<Conta> depositar(String conta, Double valor) {
+    public ResponseEntity<?> depositar(String conta, Double valor) {
         var contaDb = contaRepository.findByConta(conta).orElseThrow(() -> new ResponseStatusException(BAD_REQUEST, "Conta inecistente"));
 
-        contaDb.depositar(valor);
+        if (!contaDb.depositar(valor))
+            return ResponseEntity.status(400).body("Valor incorreto");
 
         return ResponseEntity.ok(contaRepository.save(contaDb));
 

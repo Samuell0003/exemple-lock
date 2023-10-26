@@ -18,12 +18,12 @@ public class ContaController {
     private ContaService contaService;
 
     @PostMapping("/sacar")
-    public ResponseEntity<Conta> sacar(@RequestBody Transacao transacao) {
+    public ResponseEntity<?> sacar(@RequestBody Transacao transacao) {
         return contaService.sacar(transacao.numeroConta(), transacao.valor());
     }
 
     @PostMapping("/depositar")
-    public ResponseEntity<Conta> depositar(@RequestBody Transacao transacao) {
+    public ResponseEntity<?> depositar(@RequestBody Transacao transacao) {
         return contaService.depositar(transacao.numeroConta(), transacao.valor());
     }
 

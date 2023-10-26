@@ -18,7 +18,7 @@ public class ContaController {
     private ContaService contaService;
 
     @PostMapping("/sacar")
-    public ResponseEntity<Conta> sacar(@RequestBody TransacaoConta transacaoConta) {
+    public ResponseEntity<?> sacar(@RequestBody TransacaoConta transacaoConta) {
         return contaService.sacar(transacaoConta.numeroConta(), transacaoConta.valor());
     }
 
@@ -28,7 +28,7 @@ public class ContaController {
     }
 
     @PostMapping("/depositar")
-    public ResponseEntity<Conta> depositar(@RequestBody TransacaoConta transacaoConta) {
+    public ResponseEntity<?> depositar(@RequestBody TransacaoConta transacaoConta) {
         return contaService.deposito(transacaoConta.numeroConta(), transacaoConta.valor());
     }
 }
