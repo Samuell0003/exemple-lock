@@ -27,10 +27,14 @@ public class Conta implements Serializable {
 
 
     public Double sacar( Double valor) {
+        if (valor > this.saldo)
+            return this.saldo;
         return this.saldo -= valor;
     }
 
     public Double depositar( Double valor ) {
+        if (valor <= 0)
+            return this.saldo;
         return this.saldo += valor;
     }
 }
